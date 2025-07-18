@@ -6,7 +6,7 @@ export class ArticleController {
     constructor(private readonly articleService: ArticleService) {}
 
     @Get("/")
-    findAll(page: number = 1, perPage: number = 20): string {
+    async findAll(page: number = 1, perPage: number = 20): Promise<Object[]> {
         return this.articleService.getAll();
     }
 

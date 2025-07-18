@@ -1,5 +1,6 @@
-import { Get, Post, Put, Delete } from "@nestjs/common";
+import { Get, Post, Put, Delete, Controller } from "@nestjs/common";
 
+@Controller('categories')
 export class CategoryController {
     constructor() {}
 

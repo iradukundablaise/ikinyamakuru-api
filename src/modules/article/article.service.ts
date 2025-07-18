@@ -1,9 +1,12 @@
 import { Injectable } from "@nestjs/common";
+import { PrismaService } from "src/prisma.service";
 
 @Injectable()
 export class ArticleService {
-    getAll(): string {
-        return "This is the Article Service response";
+    constructor(private prismaService: PrismaService) {}
+
+    async getAll(): Promise<Object[]> {
+        return this.prismaService.article.findMany();
     }
 
     getById(id: string): Object{

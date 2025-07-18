@@ -11,6 +11,9 @@ COPY . /app/
 
 RUN npm install
 
+# Build the application
+RUN npm run build
+
 # Create a non-root user and switch to it
 RUN adduser -D ikinyamakuru
 USER ikinyamakuru
