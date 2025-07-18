@@ -1,5 +1,7 @@
-import { Controller, Delete, Get, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { ArticleService } from "./article.service";
+import { Article } from "generated/prisma";
+import { ArticleDto } from "./article.dto";
 
 @Controller('articles')
 export class ArticleController {
@@ -11,13 +13,13 @@ export class ArticleController {
     }
 
     @Get("/:id")
-    findOneById(id: string): Object {
+    async findOneById(@Param('id') id: number): Promise<Article | null> {
         return this.articleService.getById(id);
     }
 
     @Post("/")
-    create(): void {
-        this.articleService.create();
+    create(@Body() article: ArticleDto): void {
+        this.articleService.create(article);
     }
 
     @Put("/:id")
@@ -26,7 +28,7 @@ export class ArticleController {
     }
 
     @Delete("/:id")
-    remove(id: string): void {
+    remove(@Param('id') id: number): void {
         this.articleService.delete(id);
     }
 }

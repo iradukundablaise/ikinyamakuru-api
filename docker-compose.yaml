@@ -1,19 +1,19 @@
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    name: ikinyamakuru-api
-    ports:
-      - 3000:3000
-    depends_on:
-      - postgres
-    networks:
-      - default
-
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   image: ikinyamakuru-api
+  #   container_name: ikinyamakuru-api
+  #   ports:
+  #     - 3000:3000
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - default
   postgres:
     image: postgres:16-alpine
-    name: ikinyamakuru-pg
+    container_name: ikinyamakuru-pg
     restart: always
     environment:
       POSTGRES_USER: ikinyamakuru
@@ -33,7 +33,7 @@ services:
 
   adminer:
     image: adminer:4.8.1
-    name: ikinyamakuru-adminer
+    container_name: ikinyamakuru-adminer
     restart: always
     ports:
       - 8080:8080
