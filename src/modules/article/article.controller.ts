@@ -7,7 +7,7 @@ export class ArticleController {
 
     @Get("/")
     findAll(page: number = 1, perPage: number = 20): string {
-        return "";
+        return this.articleService.getAll();
     }
 
     @Get("/:id")

@@ -11,8 +11,12 @@ COPY . /app/
 
 RUN npm install
 
+# Create a non-root user and switch to it
+RUN adduser -D ikinyamakuru
+USER ikinyamakuru
+
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "start:prod"]
+# Start the nestjs application in production mode
+CMD ["npm", "run", "start:prod"]
