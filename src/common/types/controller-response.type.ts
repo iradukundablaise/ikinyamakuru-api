@@ -1,6 +1,12 @@
-export type ControllerResponse<T> = {
+export type ControllerResponse<T> =
+  | {
+    page?: number; 
+    perPage?: number; 
+    count?: number;
+    statusCode: number; 
     data: T;
-    message?: string;
-    error?: string;
-    statusCode?: number;
+}
+  | { 
+    statusCode: number; 
+    error: string 
 };

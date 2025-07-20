@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -14,36 +8,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Category {
   id        Int       @id @default(autoincrement())
-  name      String
+  name      String    @unique
   slug      String    @unique
-  articles  Article[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  articles  Article[]
 }
 
 model Source {
   id        Int       @id @default(autoincrement())
-  name      String
+  name      String    @unique
   url       String    @unique
-  articles  Article[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  articles  Article[]
 }
 
 model Article {
-  id           Int       @id @default(autoincrement())
-  title        String
-  slug         String    @unique
-  summary      String
-  publishedAt  DateTime
-  url          String    @unique
-  categoryId   Int
-  sourceId     Int
-  category     Category  @relation(fields: [categoryId], references: [id])
-  source       Source    @relation(fields: [sourceId], references: [id])
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  summary     String
+  publishedAt DateTime
+  url         String   @unique
+  categoryId  Int
+  sourceId    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  category    Category @relation(fields: [categoryId], references: [id])
+  source      Source   @relation(fields: [sourceId], references: [id])
 }

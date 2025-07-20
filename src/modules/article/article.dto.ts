@@ -1,5 +1,4 @@
 export class ArticleDto {
-    id: number;
     title: string;
     slug: string;
     summary: string;
