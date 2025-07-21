@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Article } from "generated/prisma";
+import { Article } from "@prisma/client";
 import { PrismaService } from "src/prisma.service";
 import { ArticleDto } from "./article.dto";
 import slugify from "slugify";
@@ -26,7 +26,7 @@ export class ArticleService {
 
 
         let source = await this.prismaService.source.findFirst({
-            where: { name: article.source }
+            where: { name: article.source },
         });
 
         if (!category) {
@@ -53,41 +53,47 @@ export class ArticleService {
     }
 
     async bulkCreate(articles: ArticleDto[]): Promise<{ count: number }> {
-        // Fetch all categories and sources once
         const categories = await this.prismaService.category.findMany({
-            select: { id: true, slug: true }
+            select: { id: true, name: true }
         });
         const sources = await this.prismaService.source.findMany({
             select: { id: true, name: true }
         });
 
-        // create maps for categories slags and source names
-        const categoryMap = Object.fromEntries(categories.map(cat => [cat.slug, cat.id]));
+        const categoryMap = Object.fromEntries(categories.map(cat => [cat.name, cat.id]));
         const sourceMap = Object.fromEntries(sources.map(src => [src.name, src.id]));
 
-        // Map articles to include categoryId and sourceId
-        const data = articles.map(article => {
+        let successCount = 0;
+
+        for (const article of articles) {
             const categoryId = categoryMap[article.category];
             const sourceId = sourceMap[article.source];
 
-            if (!categoryId) throw new Error(`Category not found: ${article.category}`);
-            if (!sourceId) throw new Error(`Source not found: ${article.source}`);
+            if (!categoryId) continue;
+            if (!sourceId) continue;
 
-            return {
-                title: article.title,
-                slug: article.slug,
-                summary: article.summary,
-                publishedAt: article.publishedAt,
-                url: article.url,
-                categoryId,
-                sourceId,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            };
-        });
-
-        return this.prismaService.article.createMany({ data });
-    }  
+            try {
+                await this.prismaService.article.create({
+                    data: {
+                        title: article.title,
+                        slug: article.slug,
+                        summary: article.summary,
+                        publishedAt: article.publishedAt,
+                        url: article.url,
+                        categoryId,
+                        sourceId,
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    }
+                });
+                successCount++;
+            } catch (error) {
+                // Ignore constraint errors and continue
+                
+            }
+        }
+        return { count: successCount };
+    }
 
     async update(id: number, article: ArticleDto): Promise<Article | null> {
         // Find category and source by name

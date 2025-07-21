@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } 
 import { ArticleService } from "./article.service";
 import { ArticleDto } from "./article.dto";
 import { ControllerResponse } from "src/common/types/controller-response.type";
-import { Article } from "generated/prisma";
+import { Article } from "@prisma/client";
 
 
 @Controller('articles')
@@ -74,6 +74,24 @@ export class ArticleController {
             data: article,
             statusCode: 201
         };
+    }
+
+    @Post('/bulk')
+    async bulkCreate(
+        @Body() articlesDto: ArticleDto[]
+    ): Promise<ControllerResponse<{ count: number }>> {
+        try {
+            const articles = await this.articleService.bulkCreate(articlesDto);
+            return {
+                data: articles,
+                statusCode: 201
+            };
+        } catch (error) {
+            return {
+                error: error.message,
+                statusCode: 500
+            };
+        }
     }
 
 
